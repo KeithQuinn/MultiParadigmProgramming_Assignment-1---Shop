@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1636576974 source:c:\college 2020_2021 data analytics\semester 4_september 2021\multi-paradigm programming\assignment 1 - shop\multiparadigmprogramming_assignment-1_shop\shop in c\help\main.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+
