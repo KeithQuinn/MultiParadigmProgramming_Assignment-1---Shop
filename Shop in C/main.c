@@ -10,6 +10,7 @@ struct Product {
 struct ProductStock {
 	struct Product product;
 	int quantity;
+	int index;
 };
 
 struct Shop {
@@ -158,7 +159,6 @@ struct ProductStock checkShop(struct ProductStock* inShop, struct Product custom
 		}
 	}
 }
-
 
 int main(void){
 

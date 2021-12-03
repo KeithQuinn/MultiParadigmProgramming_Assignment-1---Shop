@@ -3,21 +3,21 @@ from typing import List
 import csv
 
 @dataclass
-class Product:
+class Product: # product dataclass with name and price
     name: str
     price: float = 0.0
 
 @dataclass
-class ProductStock:
+class ProductStock: # ProductStock dataclass with product and quantity
     product: Product
     quantity: int
 
 @dataclass
-class Shop:
+class Shop: # Shop dataclass with cash and stock
     cash: float = 0.0
     stock: List[ProductStock] = field(default_factory=list)
 
-@dataclass
+@dataclass # customer dataclass with name, budget and shopping list
 class Customer:
     name: str = ""
     budget: float = 0
@@ -37,7 +37,7 @@ def display_menu():
     print("5 - Live Mode")
     print("x - Exit application")
 
-def create_and_stock_shop():
+def stock_shop(): # functiom
     s = Shop()
     with open('../stock.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
@@ -159,7 +159,6 @@ def online_order(in_shop, customer):
     print('-'*30)
     print('')
     
-
 def live_order_details():
     #name = input(str("Enter Name: "))
     item = input(str("Choose an item: "))
@@ -219,7 +218,7 @@ def live_order(in_shop, customer):
             print('')
             print(f"Insufficient funds for {customer_item_name}, you're short by {balance} funds available is {round(customer.budget,2)}")
         else:
-            #customer_balance -= purchase_cost
+            customer_balance -= purchase_cost
             in_shop.cash += purchase_cost
     print('')
     print('-'*30)
@@ -228,7 +227,7 @@ def live_order(in_shop, customer):
     print('-'*30)
     print('')
 
-selectCustomer = input("Select Customer: A, B, C, D or E: ")
+selectCustomer = input("\nSelect Customer: A, B or C\n\n(A - shop not enough stock)\n\n(B - customer not enough money)\n\n(C - order can be fully processed): ")
 #customer = read_customer("../"+selectCustomer+".csv")
 
 def main():
@@ -236,7 +235,7 @@ def main():
     while True:
         choice = input("Choice: ")
         if (choice == "1"):
-            in_shop = create_and_stock_shop()
+            in_shop = stock_shop()
             print_shop_balance(in_shop)
             display_menu()
         elif (choice == "2"):
@@ -248,14 +247,14 @@ def main():
             print_customer(customer)
             display_menu()
         elif (choice == "4"):
-            in_shop = create_and_stock_shop()
+            in_shop = stock_shop()
             #selectCustomer = input("Select Customer: A, B, C, D or E: ")
             customer = read_customer("../"+selectCustomer+".csv")
             online_order(in_shop, customer)
             display_menu()
         elif (choice == "5"):
             customer = live_order_details()
-            in_shop = create_and_stock_shop()
+            in_shop = stock_shop()
             live_order(in_shop, customer)
             display_menu()
         elif (choice == "x"):
