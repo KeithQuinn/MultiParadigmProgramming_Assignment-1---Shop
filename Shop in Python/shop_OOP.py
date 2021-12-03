@@ -1,7 +1,5 @@
 import csv
 
-from shop_procedural import check_shop
-
 class Product:
 
     def __init__(self, name, price=0):
@@ -68,7 +66,7 @@ class Customer:
             else:
                 str += f"Total cost: {round(cost,2)}\n"
                 
-        str += f"\nThe cost would be: {self.order_cost()}, you would have {self.budget - self.order_cost()} left"
+        str += f"\nThe cost would be: {round(self.order_cost(),2)}, you would have {round(self.budget - self.order_cost(),2)} left"
         return str 
         
 class Shop:
@@ -85,41 +83,136 @@ class Shop:
                 ps = ProductStock(p, float(row[2]))
                 self.stock.append(ps)
 
-    def check_stock(self, customer_shopping_list):
-        self.product_available = []
-        for i in customer_shopping_list:
-            for j in self.stock:
-                if (j.name() == i.name()):
-                    j.product.price = i.unit_price()
-                    self.product_available.append(i)
- 
-    def order_cost(self):
-        cost = 0
-        for i in self.product_available:
-            cost += i.cost()
-        return cost
+    def check_shop(self, customer_shopping_list):
+        stock = self.stock
+        for i in stock:
+            shop_item_name = i.product.name
+            if shop_item_name == customer_shopping_list:
+                return i
 
-    def __repr__(self):
-        str = ""
-        #str += f'\nShop has {self.cash} in cash\n\n'
-        for i in self.product_available:
-            #print(item)
-            cost = i.cost()
-            str += f"{i}"
-            if (cost == 0):
-                str += f"{customer.name} doesn't know how much that costs :("
+    def online_order(self, customer):
+        total_cost = 0
+        shop_balance = self.cash
+        customer_balance = customer.budget
+        print('')
+        print('-'*30)    
+        print(f'The shop has a balance of: {round(shop_balance,2)}')
+        print(f'{customer.name} has a balance of: {round(customer_balance,2)}')
+        print('-'*30)
+
+        order = customer.shopping_list
+        for customer_wants in order:
+            customer_item_name = customer_wants.product.name
+
+        # check if product on customers order is in the shop
+            shop_has = Shop.check_shop(self, customer_item_name)
+            if shop_has == None:
+                print(f"\nNo {customer_item_name} in stock\n")
+                continue
+            wanted = int(customer_wants.quantity)
+            available = int(shop_has.quantity)
+
+        # insufficient stock levels
+            if available < wanted:
+                print(f"\nOrder can't be complete, there's insufficient stock levels for {customer_item_name} we have {available} in stock but you require {wanted}.")
+                continue
+
+        # sufficient stock levels
+            if available >= wanted :
+                remaining = available - wanted
+                print(f"\nThere's {available} {customer_item_name} in stock, your order of {wanted} can be satisied leaving {remaining} remaining in stock.")
+                shop_has.quantity -= wanted
+                purchase_cost = wanted * shop_has.product.price
+                balance = round(customer.budget - purchase_cost,2)
+                print(f"The unit cost of {customer_item_name} is {round(shop_has.product.price,2)} so the total cost for {wanted} is {round(purchase_cost,2)}.")
+                print(f"Your budget is {round(customer.budget,2)} leaving a balance of {balance}")
+
+        # insufficient funds
+
+            total_cost += purchase_cost
+            total_cost = round(total_cost,2)
+            #print(f'total cost is {total_cost}')
+            if purchase_cost > customer.budget :
+                print(f"Insufficient funds for {customer_item_name}, you're short by {balance} funds available is {round(customer.budget,2)}")
             else:
-                str += f"COST: {round(cost,2)}\n\n"
-        
-        str += f"The cost would be: {customer.order_cost()}, you had {customer.budget}, you have {round(customer.budget - self.order_cost(),2)} left\n"
-        str += f"\nThe cost would be: {customer.order_cost()}, shop balance was {self.cash}, updated to {round(self.cash + self.order_cost(),2)}\n"
-        return str
+                customer.budget -= purchase_cost
+                self.cash += purchase_cost
+        print('')
+        print('-'*30)
+        print(f'New shop balance is {round(self.cash,2)}')
+        print(f'New customer balance is {round(customer.budget,2)}')
+        print('-'*30)
+        print('')          
 
+    def live_order_details():
+        item = input(str("Choose an item: "))
+        quantity = int(input("Choose a quantity: "))
+        #budget = float(input("Enter budget: "))
+        #c = Customer(name, float(budget))
+        p = Product(item)
+        ps = ProductStock(p, quantity)
+        c = Customer(item, quantity)
+        c.shopping_list.append(ps)
+        return c
+
+    def live_order(self, customer):
+        total_cost = 0
+        shop_balance = self.cash
+        customer_balance = float(input("Enter Budget: "))
+        print('')
+        print('-'*30)    
+        print(f'The shop has a balance of: {shop_balance}')
+        #print(f'{customer.name} has a balance of: {customer_balance}')
+        print('-'*30)
+
+        order = customer.shopping_list
+        for customer_wants in order:
+            customer_item_name = customer_wants.product.name
+
+        # check if product on customers order is in the shop
+            shop_has = Shop.check_shop(self, customer_item_name)
+            if shop_has == None:
+                print(f"\nNo {customer_item_name} in stock\n")
+                continue
+            wanted = int(customer_wants.quantity)
+            available = int(shop_has.quantity)
+
+        # insufficient stock levels
+            if available < wanted:
+                print(f"\nOrder can't be complete, there's insufficient stock levels for {customer_item_name} we have {available} in stock but you require {wanted}.")
+                continue
+
+        # sufficient stock levels
+            if available >= wanted :
+                remaining = available - wanted
+                print(f"\nThere's {available} {customer_item_name} in stock, your order of {wanted} can be satisied leaving {remaining} remaining in stock.")
+                shop_has.quantity -= wanted
+                purchase_cost = wanted * shop_has.product.price
+                balance = round(customer_balance - purchase_cost,2)
+                print(f"The unit cost of {customer_item_name} is {round(shop_has.product.price,2)} so the total cost for {wanted} is {round(purchase_cost,2)}.")
+                print(f"Your budget is {round(customer_balance,2)} leaving a balance of {balance}")
+
+        # insufficient funds
+            total_cost += purchase_cost
+            total_cost = round(total_cost,2)
+            #print(f'total cost is {total_cost}')
+            if purchase_cost > customer_balance :
+                print('')
+                print(f"Insufficient funds for {customer_item_name}, you're short by {balance} funds available is {round(customer.budget,2)}")
+            else:
+                #customer_balance -= purchase_cost
+                self.cash += purchase_cost
+        print('')
+        print('-'*30)
+        print(f'New shop balance is {round(self.cash,2)}')
+        print(f'New customer balance is {round(customer_balance,2)}')
+        print('-'*30)
+        print('')
 
 def display_menu():
     print("")
     print("-" * 30)
-    print(f"Hi {customer.name}, welcome to {shop.name} Shop")
+    print(f"Welcome to {shop.name} Shop")
     print("-" * 30)
     print("Menu")
     print("=" * 10)
@@ -131,13 +224,8 @@ def display_menu():
     print("x - Exit application")
 
 selectCustomer = input("Select Customer: A, B, C, D or E: ")
-customer = Customer("../"+selectCustomer+".csv")
+#customer = Customer("../"+selectCustomer+".csv")
 shop = Shop("../stock.csv")
-#customer = Customer("../A.csv")
-#customer.calculate_costs(shop.stock)
-#shop.check_stock(customer.shopping_list)
-#print(customer)
-#print(shop)
 
 def main():
     display_menu()
@@ -159,21 +247,26 @@ def main():
             print('-'*50)
             display_menu()
         elif (choice == "3"):
+            customer = Customer("../"+selectCustomer+".csv")
+            print(f"Hi {customer.name}, welcome to {shop.name} Shop")
             print(f'\nHi {customer.name}, welcome to {shop.name}')
+            print(f'\n{customer.name}s budget is {customer.budget}')
             customer.calculate_costs(shop.stock)
             print(customer)
             display_menu()
         elif (choice == "4"):
+            customer = Customer("../"+selectCustomer+".csv")
             print('')
             print('-'*50)
             print(f'{customer.name} wants to place the following order:')
             print('-'*50)
             customer.calculate_costs(shop.stock)
-            shop.check_stock(customer.shopping_list)
-            print(shop)
+            Shop.check_shop(shop, customer.shopping_list)
+            Shop.online_order(shop, customer)
             display_menu()
         elif (choice == "5"):
-
+            live_customer = Shop.live_order_details()
+            Shop.live_order(shop, live_customer)
             display_menu()
         elif (choice == "x"):
             break

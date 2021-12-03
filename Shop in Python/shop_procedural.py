@@ -151,12 +151,14 @@ def online_order(in_shop, customer):
         else:
             customer.budget -= purchase_cost
             in_shop.cash += purchase_cost
+
     print('')
     print('-'*30)
     print(f'New shop balance is {in_shop.cash}')
     print(f'New customer balance is {round(customer.budget,2)}')
     print('-'*30)
     print('')
+    
 
 def live_order_details():
     #name = input(str("Enter Name: "))
@@ -174,7 +176,7 @@ def live_order_details():
 def live_order(in_shop, customer):
     total_cost = 0
     shop_balance = in_shop.cash
-    customer_balance = customer.budget
+    customer_balance = float(input("Enter Budget: "))
     print('')
     print('-'*30)    
     print(f'The shop has a balance of: {shop_balance}')
@@ -204,27 +206,30 @@ def live_order(in_shop, customer):
             print(f"\nThere's {available} {customer_item_name} in stock, your order of {wanted} can be satisied leaving {remaining} remaining in stock.")
             shop_has.quantity -= wanted
             purchase_cost = wanted * shop_has.product.price
-            balance = round(customer.budget - purchase_cost,2)
+            balance = round(customer_balance - purchase_cost,2)
             print(f"The unit cost of {customer_item_name} is {round(shop_has.product.price,2)} so the total cost for {wanted} is {round(purchase_cost,2)}.")
-            #print(f"Your budget is {round(customer.budget,2)} leaving a balance of {balance}")
+            print(f"Your budget is {round(customer_balance,2)} leaving a balance of {balance}")
 
     # insufficient funds
         
         total_cost += purchase_cost
         total_cost = round(total_cost,2)
         #print(f'total cost is {total_cost}')
-        if purchase_cost > customer.budget :
+        if purchase_cost > customer_balance :
             print('')
             print(f"Insufficient funds for {customer_item_name}, you're short by {balance} funds available is {round(customer.budget,2)}")
         else:
-            customer.budget -= purchase_cost
+            #customer_balance -= purchase_cost
             in_shop.cash += purchase_cost
     print('')
     print('-'*30)
     print(f'New shop balance is {round(in_shop.cash,2)}')
-    #print(f'New customer balance is {round(customer.budget,2)}')
+    print(f'New customer balance is {round(customer_balance,2)}')
     print('-'*30)
     print('')
+
+selectCustomer = input("Select Customer: A, B, C, D or E: ")
+#customer = read_customer("../"+selectCustomer+".csv")
 
 def main():
     display_menu()
@@ -238,13 +243,13 @@ def main():
             print_shop(in_shop)
             display_menu()
         elif (choice == "3"):
-            selectCustomer = input("Select Customer: A, B, C, D or E: ")
+            #selectCustomer = input("Select Customer: A, B, C, D or E: ")
             customer = read_customer("../"+selectCustomer+".csv")
             print_customer(customer)
             display_menu()
         elif (choice == "4"):
             in_shop = create_and_stock_shop()
-            selectCustomer = input("Select Customer: A, B, C, D or E: ")
+            #selectCustomer = input("Select Customer: A, B, C, D or E: ")
             customer = read_customer("../"+selectCustomer+".csv")
             online_order(in_shop, customer)
             display_menu()

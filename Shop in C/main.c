@@ -143,10 +143,21 @@ void printShop(struct Shop s){
 	}
 }
 
-struct checkShop {
-    struct Shop createAndStockShop;
-    struct Customer createCustomer;
-};
+struct ProductStock checkShop(struct ProductStock* inShop, struct Product customerWants){
+    for (int i = 0; i < 3; i++)
+	{
+		printf("for loop");
+		struct ProductStock currentItem = inShop[i];
+		struct Product currentProduct = currentItem.product;
+        //printf("Current product: %s", currentProduct.name);
+        //printf("\nCustomer wants: %s", customerWants.name);
+		if (currentProduct.name == customerWants.name);
+		{
+		    printf("Item found");
+		    return currentItem;
+		}
+	}
+}
 
 
 int main(void){
@@ -154,10 +165,14 @@ int main(void){
     //struct Shop checkStock = checkShop(struct Shop createAndStockShop(), struct Customer createCustomer())
 
     struct Shop shop = createAndStockShop();
-	printShop(shop);
+	//printShop(shop);
 
     struct Customer customer = createCustomer();
-    printCustomer(customer);
+    //printCustomer(customer);
+
+    checkShop(shop.stock, customer.shoppingList[0].product);
+
+
 
     //struct Product p1 = { "Stock1", 100 };
     //struct ProductStock p1Stock = { p1, 20 };
