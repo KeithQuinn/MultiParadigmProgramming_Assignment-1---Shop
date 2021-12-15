@@ -27,9 +27,8 @@ class ProductStock: # setting ProductStock as a class product name, product quan
     def __repr__(self):
         return f"{self.product}Quantity: {self.quantity}\n"
 
-class Customer:
+class Customer: # read in the customer details from a CSV file
 
-    # read in the customer details from a CSV file
     def __init__(self, path):
         self.shopping_list = [] # define an empty shopping list (will append to later)
         with open(path) as csv_file:
@@ -58,7 +57,8 @@ class Customer:
     
     def __repr__(self): # returns a string with customer order cost and remaining budget
         print('')
-        str = f"{self.name} wants to buy the following:\n"
+        str = f"\nHi {self.name}, welcome to {shop.name} Shop\n\n"
+        str += f"{self.name} wants to buy the following:\n"
         for item in self.shopping_list:
             cost = item.cost()
             str += f"\n{item}"
@@ -67,10 +67,11 @@ class Customer:
             else:
                 str += f"Total cost: {round(cost,2)}\n"
                 
-        str += f"\nThe cost would be: {round(self.order_cost(),2)}, you would have {round(self.budget - self.order_cost(),2)} left"
+        str += f"\n{self.name}s budget is {self.budget}\n"
+        str += f"\nThe cost would be {round(self.order_cost(),2)}, {self.name} would have {round(self.budget - self.order_cost(),2)} left"
         return str 
 
-class Live: # Takes in details when shop operates in live mode
+class Live(Customer): # Takes in details when shop operates in live mode
         def __init__(self):
             self.shopping_list = []
             self.name = input("Enter Product: ")
@@ -78,33 +79,7 @@ class Live: # Takes in details when shop operates in live mode
             self.budget = float(input("Enter Budget: "))
             p = Product(self.name)
             ps = ProductStock(p, self.quantity)
-            self.shopping_list.append(ps) 
-
-        def calculate_costs(self, shop_stock): # function to define the cost of the products in the customer shopping list
-            for i in shop_stock:
-                for j in self.shopping_list:
-                    if (j.name() == i.name()):
-                        j.product.price = i.unit_price()
-
-        def order_cost(self): # function to calculate the cost of the order
-            cost = 0
-            for i in self.shopping_list:
-                cost += i.cost()
-            return cost
-
-        def __repr__(self): # returns a string with customer order cost and remaining budget
-            print('')
-            str = f"{self.name} wants to buy the following:\n"
-            for item in self.shopping_list:
-                cost = item.cost()
-                str += f"\n{item}"
-                if (cost == 0):
-                    str += f"Apologies {self.name}, there's no price available for {item.product.name}\n"
-                else:
-                    str += f"Total cost: {round(cost,2)}\n"
-
-            str += f"\nThe cost would be: {round(self.order_cost(),2)}, you would have {round(self.budget - self.order_cost(),2)} left"
-            return str
+            self.shopping_list.append(ps)
  
 class Shop: # Shop class reads in the Shop stock from CSV
     
@@ -119,6 +94,14 @@ class Shop: # Shop class reads in the Shop stock from CSV
                 p = Product(row[0], float(row[1])) # product name and quantity
                 ps = ProductStock(p, float(row[2])) # product price
                 self.stock.append(ps) # appends the name, price and quantity details to self.stock list
+
+    def shop_balance(self):
+        print(f'Initial cash value for {shop.name} shop is {shop.cash}')
+
+    def stock_levels_pricing(self):
+            print(f'{self.name} shop currently has the following stock:\n')
+            for i in self.stock:
+                print(i)
 
     def check_shop(self, customer_shopping_list): # check to see if item on customer shopping list is in stock
         stock = self.stock
@@ -137,7 +120,7 @@ class Shop: # Shop class reads in the Shop stock from CSV
         print(f'{customer.name} has a balance of: {round(customer_balance,2)}\n') # customer name and budget from CSV file
         print('-'*30)
         print(f'{customer.name} wants to place the following order:')
-        print('-'*30)
+        print('-'*30)     
 
         order = customer.shopping_list
         for customer_wants in order: # loops through the customer shopping list
@@ -196,8 +179,6 @@ def display_menu(): # creating a menu to navigate the shop app
     print("5 - Live Mode")
     print("x - Exit application")
 
-selectCustomer = input("\nSelect Customer: A, B or C\n\n(A - shop not enough stock)\n\n(B - customer not enough money)\n\n(C - order can be fully processed): ")
-#customer = Customer("../"+selectCustomer+".csv")
 shop = Shop("../stock.csv")
 
 def main():
@@ -207,38 +188,38 @@ def main():
         if (choice == "1"):
             print('')
             print('-'*50)
-            print(f'Initial cash value for {shop.name} shop is {shop.cash}')
+            shop.shop_balance()
             print('-'*50)
             display_menu()
         elif (choice == "2"):
             print('')
             print('-'*50)
-            print(f'The shop currently has the following stock:')
-            print('-'*50)
-            for i in shop.stock:
-                print(i)
+            shop.stock_levels_pricing()
             print('-'*50)
             display_menu()
         elif (choice == "3"):
+            selectCustomer = input("\nSelect Customer: A, B or C\n\n(A - shop not enough stock)\n\n(B - customer not enough money)\n\n(C - order can be fully processed): ")
             customer = Customer("../"+selectCustomer+".csv")
-            print(f"\nHi {customer.name}, welcome to {shop.name} Shop, {customer.name}s budget is {customer.budget}")
+            #print(f"\nHi {customer.name}, welcome to {shop.name} Shop, {customer.name}s budget is {customer.budget}")
+            #customer.welcome()
             customer.calculate_costs(shop.stock)
             print(customer)
             display_menu()
         elif (choice == "4"):
+            selectCustomer = input("\nSelect Customer: A, B or C\n\n(A - shop not enough stock)\n\n(B - customer not enough money)\n\n(C - order can be fully processed): ")
             customer = Customer("../"+selectCustomer+".csv")
             print('')
             customer.calculate_costs(shop.stock)
-            Shop.check_shop(shop, customer.shopping_list)
-            Shop.order_processing(shop, customer)
+            shop.check_shop(customer.shopping_list)
+            shop.order_processing(customer)
             display_menu()
         elif (choice == "5"):
             print('-'*50)
             print('')
             live_customer = Live()
             live_customer.calculate_costs(shop.stock)
-            Shop.check_shop(shop, live_customer.shopping_list)
-            Shop.order_processing(shop, live_customer)
+            shop.check_shop(live_customer.shopping_list)
+            shop.order_processing(live_customer)
             display_menu()
             print('-'*50)
         elif (choice == "x"):

@@ -37,33 +37,33 @@ def display_menu():
     print("5 - Live Mode")
     print("x - Exit application")
 
-def stock_shop(): # functiom
+def stock_shop(): # function to stock the shop
     s = Shop()
-    with open('../stock.csv') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+    with open('../stock.csv') as csv_file: # reads the stock CSV file
+        csv_reader = csv.reader(csv_file, delimiter=',') 
         first_row = next(csv_reader)
-        s.cash = float(first_row[1])
-        for row in csv_reader:
-            p = Product(row[0], float(row[1]))
-            ps = ProductStock(p, float(row[2]))
-            s.stock.append(ps)
+        s.cash = float(first_row[1]) # shop cash
+        for row in csv_reader: # loops through remaining rows
+            p = Product(row[0], float(row[1])) # p for product
+            ps = ProductStock(p, float(row[2])) # ps for product stock
+            s.stock.append(ps) # appending stock to ps
             #print(ps)
-    return s
+    return s 
 
-def read_customer(file_path):
+def read_customer(file_path): # reads in the customer details from a csv file
     with open(file_path) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         first_row = next(csv_reader)
-        c = Customer(first_row[0], float(first_row[1]))
-        for row in csv_reader:
+        c = Customer(first_row[0], float(first_row[1])) # customer name and budget
+        for row in csv_reader: # loopd through remaining rows
             name = row[0]
             quantity = float(row[1])
             p = Product(name)
             ps = ProductStock(p, quantity)
-            c.shopping_list.append(ps)
+            c.shopping_list.append(ps) # appends the shopping list with all products found
     return c
 
-def print_customer(c):
+def print_customer(c): # prints customer details, name budget and shopping list 
     print(f'\nCUSTOMER NAME: {c.name} \nCUSTOMER BUDGET: {c.budget}')
 
     for item in c.shopping_list:
@@ -73,21 +73,21 @@ def print_customer(c):
         cost = item.quantity * item.product.price
         print(f'The cost to {c.name} will be €{cost}')
 
-def print_product(p):
+def print_product(p): # prints product details, name and price
     print(f'\nPRODUCT NAME: {p.name} \nPRODUCT PRICE: {p.price}')
 
-def print_shop(s):
+def print_shop(s): # prints shop details, product and quantity
     #print(f'Shop has {s.cash} in cash')
     print('')
     print('-'*30)
-    for item in s.stock:
-        print_product(item.product)
-        print(f'The Shop has {item.quantity} of the above')
+    for item in s.stock: # loops through stock
+        print_product(item.product) # prints product
+        print(f'The Shop has {item.quantity} of the above') # prints quantity
     print('')
     print('-'*30)
     print('')
 
-def print_shop_balance(s):
+def print_shop_balance(s): # prints shop balance
     print('')
     print('-'*30)
     print('')
@@ -96,25 +96,25 @@ def print_shop_balance(s):
     print('-'*30)
     print('')
 
-def check_shop(in_shop, looking_for):
+def check_shop(in_shop, looking_for): # checks shop stock for customer item
     stock = in_shop.stock
-    for i in stock:
+    for i in stock: # lops through the stock
         shop_item_name = i.product.name
-        if shop_item_name == looking_for:
-            return i
+        if shop_item_name == looking_for: # check for a match between what the customer wants and whats in stock
+            return i # return and matched items
 
-def online_order(in_shop, customer):
-    total_cost = 0
+def online_order(in_shop, customer): # online order using csv file
+    total_cost = 0 # setting cost = 0 at start
     shop_balance = in_shop.cash
     customer_balance = customer.budget
     print('')
     print('-'*30)    
-    print(f'The shop has a balance of: {shop_balance}')
-    print(f'{customer.name} has a balance of: {customer_balance}')
+    print(f'The shop has a balance of: {shop_balance}') # initial shop cash value from csv file
+    print(f'{customer.name} has a balance of: {customer_balance}') # customer name and budget from csv file
     print('-'*30)
     
     order = customer.shopping_list
-    for customer_wants in order:
+    for customer_wants in order: # loops through the customer shopping list
         customer_item_name = customer_wants.product.name
 
     # check if product on customers order is in the shop
@@ -127,7 +127,7 @@ def online_order(in_shop, customer):
 
     # insufficient stock levels
         if available < wanted:
-            print(f"\nOrder can't be complete, there's insufficient stock levels for {customer_item_name} we have {available} in stock but you require {wanted}.")
+            print(f"\n*** WARNING *** Order can't be complete, there's insufficient stock levels for {customer_item_name} we have {available} in stock but you require {wanted}.")
             continue
 
     # sufficient stock levels
@@ -147,7 +147,7 @@ def online_order(in_shop, customer):
         #print(f'total cost is {total_cost}')
         if purchase_cost > customer.budget :
             print('')
-            print(f"Insufficient funds for {customer_item_name}, you're short by {balance} funds available is {round(customer.budget,2)}")
+            print(f"*** WARNING *** Insufficient funds for {customer_item_name}, you're short by {balance} funds available is {round(customer.budget,2)}")
         else:
             customer.budget -= purchase_cost
             in_shop.cash += purchase_cost
@@ -159,27 +159,22 @@ def online_order(in_shop, customer):
     print('-'*30)
     print('')
     
-def live_order_details():
-    #name = input(str("Enter Name: "))
-    item = input(str("Choose an item: "))
+def live_order_details(): # live order details for shop operating in live mode
+    item = input(str("Choose an item: ")) 
     quantity = int(input("Choose a quantity: "))
-    #budget = float(input("Enter budget: "))
-    
-    #c = Customer(name, float(budget))
     p = Product(item)
     ps = ProductStock(p, quantity)
     c = Customer(item, quantity)
     c.shopping_list.append(ps)
     return c
 
-def live_order(in_shop, customer):
+def live_order(in_shop, customer): # live_order function for shop operating in live mode
     total_cost = 0
     shop_balance = in_shop.cash
     customer_balance = float(input("Enter Budget: "))
     print('')
     print('-'*30)    
     print(f'The shop has a balance of: {shop_balance}')
-    #print(f'{customer.name} has a balance of: {customer_balance}')
     print('-'*30)
     
     order = customer.shopping_list
@@ -196,7 +191,7 @@ def live_order(in_shop, customer):
 
     # insufficient stock levels
         if available < wanted:
-            print(f"\nOrder can't be complete, there's insufficient stock levels for {customer_item_name} we have {available} in stock but you require {wanted}.")
+            print(f"\n*** WARNING *** Order can't be complete, there's insufficient stock levels for {customer_item_name} we have {available} in stock but you require {wanted}.")
             continue
 
     # sufficient stock levels
@@ -210,13 +205,12 @@ def live_order(in_shop, customer):
             print(f"Your budget is {round(customer_balance,2)} leaving a balance of {balance}")
 
     # insufficient funds
-        
         total_cost += purchase_cost
         total_cost = round(total_cost,2)
         #print(f'total cost is {total_cost}')
         if purchase_cost > customer_balance :
             print('')
-            print(f"Insufficient funds for {customer_item_name}, you're short by {balance} funds available is {round(customer.budget,2)}")
+            print(f"*** WARNING *** Insufficient funds for {customer_item_name}, you're short by {balance} funds available is {round(customer.budget,2)}")
         else:
             customer_balance -= purchase_cost
             in_shop.cash += purchase_cost
@@ -226,9 +220,6 @@ def live_order(in_shop, customer):
     print(f'New customer balance is {round(customer_balance,2)}')
     print('-'*30)
     print('')
-
-selectCustomer = input("\nSelect Customer: A, B or C\n\n(A - shop not enough stock)\n\n(B - customer not enough money)\n\n(C - order can be fully processed): ")
-#customer = read_customer("../"+selectCustomer+".csv")
 
 def main():
     display_menu()
@@ -242,13 +233,13 @@ def main():
             print_shop(in_shop)
             display_menu()
         elif (choice == "3"):
-            #selectCustomer = input("Select Customer: A, B, C, D or E: ")
+            selectCustomer = input("\nSelect Customer: A, B or C\n\n(A - shop not enough stock)\n\n(B - customer not enough money)\n\n(C - order can be fully processed): ")
             customer = read_customer("../"+selectCustomer+".csv")
             print_customer(customer)
             display_menu()
         elif (choice == "4"):
             in_shop = stock_shop()
-            #selectCustomer = input("Select Customer: A, B, C, D or E: ")
+            selectCustomer = input("\nSelect Customer: A, B or C\n\n(A - shop not enough stock)\n\n(B - customer not enough money)\n\n(C - order can be fully processed): ")
             customer = read_customer("../"+selectCustomer+".csv")
             online_order(in_shop, customer)
             display_menu()

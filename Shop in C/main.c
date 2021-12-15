@@ -68,7 +68,7 @@ struct Shop createAndStockShop(){
 }
 
 struct Customer createCustomer(){
-    FILE *fp = fopen("../customer.csv", "r");
+    FILE *fp = fopen("../A.csv", "r");
     //char * line = NULL;
     if(fp == NULL) {
     perror("Unable to open file!");
@@ -145,32 +145,40 @@ void printShop(struct Shop s){
 }
 
 struct ProductStock checkShop(struct ProductStock* inShop, struct Product customerWants){
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 5; i++)
 	{
-		printf("for loop");
+		//printf("for loop");
 		struct ProductStock currentItem = inShop[i];
 		struct Product currentProduct = currentItem.product;
         //printf("Current product: %s", currentProduct.name);
         //printf("\nCustomer wants: %s", customerWants.name);
 		if (currentProduct.name == customerWants.name);
 		{
-		    printf("Item found");
+		    printf("Item found: %s", customerWants.name);
 		    return currentItem;
 		}
 	}
 }
 
-int main(void){
+void processOrder(struct Shop shopHas, struct Customer customerWants){
+    double totalCost = 1;
+    double shopCash = shopHas.cash;
 
-    //struct Shop checkStock = checkShop(struct Shop createAndStockShop(), struct Customer createCustomer())
+    printf("total cost is %.2f: ", totalCost);
+    printf("shop balance is %.2f: ", shopCash);
+}
+
+
+int main(void){
 
     struct Shop shop = createAndStockShop();
 	//printShop(shop);
 
-    struct Customer customer = createCustomer();
-    //printCustomer(customer);
+    struct Customer A = createCustomer();
+    printCustomer(A);
 
-    checkShop(shop.stock, customer.shoppingList[0].product);
+    //processOrder(shop, A);
+    //checkShop(shop.stock, A.shoppingList[1].product);
 
 
 
