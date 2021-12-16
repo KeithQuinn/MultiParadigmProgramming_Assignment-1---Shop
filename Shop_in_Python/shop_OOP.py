@@ -63,7 +63,7 @@ class Customer: # read in the customer details from a CSV file
             cost = item.cost()
             str += f"\n{item}"
             if (cost == 0):
-                str += f"Apologies {self.name}, there's no price available for {item.product.name}\n"
+                str += f"\nApologies {self.name}, there's no price available for {item.product.name}\n"
             else:
                 str += f"Total cost: {round(cost,2)}\n"
                 
@@ -200,8 +200,6 @@ def main():
         elif (choice == "3"):
             selectCustomer = input("\nSelect Customer: A, B or C\n\n(A - shop not enough stock)\n\n(B - customer not enough money)\n\n(C - order can be fully processed): ")
             customer = Customer("../"+selectCustomer+".csv")
-            #print(f"\nHi {customer.name}, welcome to {shop.name} Shop, {customer.name}s budget is {customer.budget}")
-            #customer.welcome()
             customer.calculate_costs(shop.stock)
             print(customer)
             display_menu()
