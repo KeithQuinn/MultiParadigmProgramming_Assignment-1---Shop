@@ -80,6 +80,25 @@ class Live(Customer): # Takes in details when shop operates in live mode
             p = Product(self.name)
             ps = ProductStock(p, self.quantity)
             self.shopping_list.append(ps)
+
+        def write_to_csv():
+            with open('../live.csv', 'w', newline="") as file:
+                myFile = csv.writer(file)
+                name = str(input("Enter Name: "))
+                budget = float(input("Enter Budget: "))
+                myFile.writerow([name, budget])
+                while True:
+                    try:
+                        Item = str(input("Enter Item (or x to quit): "))
+                        if Item == "x":
+                            break
+                        How_many = float(input("Enter Quantity (or 0 to quit): "))
+                        if How_many == "0":
+                            break
+                        else:
+                            myFile.writerow([Item, How_many])
+                    except:
+                        print("")
  
 class Shop: # Shop class reads in the Shop stock from CSV
     
@@ -116,7 +135,7 @@ class Shop: # Shop class reads in the Shop stock from CSV
         customer_balance = customer.budget
         print('')
         print('-'*30)    
-        print(f'The shop has a balance of: {round(shop_balance,2)}') # shop balance from CSV file
+        print(f'{self.name} shop has a balance of: {round(shop_balance,2)}') # shop balance from CSV file
         print(f'{customer.name} has a balance of: {round(customer_balance,2)}\n') # customer name and budget from CSV file
         print('-'*30)
         print(f'{customer.name} wants to place the following order:')
@@ -212,14 +231,13 @@ def main():
             shop.order_processing(customer)
             display_menu()
         elif (choice == "5"):
-            print('-'*50)
+            Live.write_to_csv()
+            customer = Customer("../live.csv")
             print('')
-            live_customer = Live()
-            live_customer.calculate_costs(shop.stock)
-            shop.check_shop(live_customer.shopping_list)
-            shop.order_processing(live_customer)
+            customer.calculate_costs(shop.stock)
+            shop.check_shop(customer.shopping_list)
+            shop.order_processing(customer)
             display_menu()
-            print('-'*50)
         elif (choice == "x"):
             break
         else:

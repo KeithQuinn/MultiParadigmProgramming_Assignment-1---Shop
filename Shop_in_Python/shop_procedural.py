@@ -64,17 +64,36 @@ def read_customer(file_path): # reads in the customer details from a csv file
     return c
 
 def print_customer(c): # prints customer details, name budget and shopping list 
-    print(f'\nCUSTOMER NAME: {c.name} \nCUSTOMER BUDGET: {c.budget}')
+    print(f'\nCustomer Name: {c.name} \nCustomer Budget: {c.budget}')
 
     for item in c.shopping_list:
         print_product(item.product)
 
-        print(f'{c.name} ORDERS {item.quantity} OF ABOVE PRODUCT')
-        cost = item.quantity * item.product.price
-        print(f'The cost to {c.name} will be €{cost}')
+        print(f'{c.name} wants to order {item.quantity}')
+        #cost = item.quantity * item.product.price
+        #print(f'The cost to {c.name} will be €{cost}')
+
+def live():
+    with open('../live.csv', 'w', newline="") as file:
+        myFile = csv.writer(file)
+        name = str(input("Enter Name: "))
+        budget = float(input("Enter Budget: "))
+        myFile.writerow([name, budget])
+        while True:
+            try:
+                Item = str(input("Enter Item (or x to quit): "))
+                if Item == "x":
+                    break
+                How_many = float(input("Enter Quantity (or 0 to quit): "))
+                if How_many == "0":
+                    break
+                else:
+                    myFile.writerow([Item, How_many])
+            except:
+                print("")
 
 def print_product(p): # prints product details, name and price
-    print(f'\nPRODUCT NAME: {p.name} \nPRODUCT PRICE: {p.price}')
+    print(f'\nProduct Name: {p.name}')
 
 def print_shop(s): # prints shop details, product and quantity
     #print(f'Shop has {s.cash} in cash')
@@ -230,6 +249,7 @@ def main():
             print_shop_balance(in_shop)
             display_menu()
         elif (choice == "2"):
+            in_shop = stock_shop()
             print_shop(in_shop)
             display_menu()
         elif (choice == "3"):
@@ -244,9 +264,10 @@ def main():
             online_order(in_shop, customer)
             display_menu()
         elif (choice == "5"):
-            customer = live_order_details()
+            live()
             in_shop = stock_shop()
-            live_order(in_shop, customer)
+            customer = read_customer("../live.csv")
+            online_order(in_shop, customer)
             display_menu()
         elif (choice == "x"):
             break
