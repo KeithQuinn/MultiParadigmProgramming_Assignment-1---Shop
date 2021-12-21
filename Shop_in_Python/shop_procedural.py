@@ -73,7 +73,7 @@ def print_customer(c): # prints customer details, name budget and shopping list
         #cost = item.quantity * item.product.price
         #print(f'The cost to {c.name} will be €{cost}')
 
-def live():
+def write_to_csv(): # function to write live order to csv
     with open('../live.csv', 'w', newline="") as file:
         myFile = csv.writer(file)
         name = str(input("Enter Name: "))
@@ -81,10 +81,10 @@ def live():
         myFile.writerow([name, budget])
         while True:
             try:
-                Item = str(input("Enter Item (or x to quit): "))
+                Item = str(input("Enter Item (or x to finish shopping): "))
                 if Item == "x":
                     break
-                How_many = float(input("Enter Quantity (or 0 to quit): "))
+                How_many = float(input("Enter Quantity (or 0 to finish shopping): "))
                 if How_many == "0":
                     break
                 else:
@@ -264,7 +264,7 @@ def main():
             online_order(in_shop, customer)
             display_menu()
         elif (choice == "5"):
-            live()
+            write_to_csv()
             in_shop = stock_shop()
             customer = read_customer("../live.csv")
             online_order(in_shop, customer)

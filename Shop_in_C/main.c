@@ -119,9 +119,9 @@ void printCustomer(struct Customer c){
 	for (int i = 0; i < c.index; i++)
 	{
 		printProduct(c.shoppingList[i].product);
-		printf("%s ORDERS %d OF THE ABOVE PRODUCT\n", c.customerName, c.shoppingList[i].quantity);
+		printf("%s ORDERS %d OF THE ABOVE PRODUCT\n\n", c.customerName, c.shoppingList[i].quantity);
 		double cost = c.shoppingList[i].quantity * c.shoppingList[i].product.price;
-		printf("The cost to %s will be %.2f\n\n", c.customerName, cost);
+		//printf("The cost to %s will be %.2f\n\n", c.customerName, cost);
 
 		//printOrder(c.order[i].order);
 		//printf("%s wants %d of the above\n", c.customerName, c.order[i].quantity);
@@ -172,7 +172,7 @@ void processOrder(struct Shop shopHas, struct Customer customerWants){
 int main(void){
 
     struct Shop shop = createAndStockShop();
-	//printShop(shop);
+	printShop(shop);
 
     struct Customer A = createCustomer();
     printCustomer(A);

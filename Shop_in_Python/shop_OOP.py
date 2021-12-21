@@ -81,7 +81,7 @@ class Live(Customer): # Takes in details when shop operates in live mode
             ps = ProductStock(p, self.quantity)
             self.shopping_list.append(ps)
 
-        def write_to_csv():
+        def write_to_csv(): # function to write live order to csv
             with open('../live.csv', 'w', newline="") as file:
                 myFile = csv.writer(file)
                 name = str(input("Enter Name: "))
@@ -89,10 +89,10 @@ class Live(Customer): # Takes in details when shop operates in live mode
                 myFile.writerow([name, budget])
                 while True:
                     try:
-                        Item = str(input("Enter Item (or x to quit): "))
+                        Item = str(input("Enter Item (or x to finish shopping): "))
                         if Item == "x":
                             break
-                        How_many = float(input("Enter Quantity (or 0 to quit): "))
+                        How_many = float(input("Enter Quantity (or 0 to finish shopping): "))
                         if How_many == "0":
                             break
                         else:
